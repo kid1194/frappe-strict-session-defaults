@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include strict_session_defaults *.css
+recursive-include strict_session_defaults *.csv
+recursive-include strict_session_defaults *.html
+recursive-include strict_session_defaults *.ico
+recursive-include strict_session_defaults *.js
+recursive-include strict_session_defaults *.json
+recursive-include strict_session_defaults *.md
+recursive-include strict_session_defaults *.png
+recursive-include strict_session_defaults *.py
+recursive-include strict_session_defaults *.svg
+recursive-include strict_session_defaults *.txt
+recursive-exclude strict_session_defaults *.pyc

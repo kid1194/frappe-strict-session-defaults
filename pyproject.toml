@@ -1,0 +1,22 @@
+[project]
+name = "strict_session_defaults"
+authors = [
+    {name = "Ameen Ahmed (Level Up)", email = "kid1194@gmail.com"}
+]
+description = "Frappe plugin that enforces and manages the session defaults popup."
+keywords = ["frappe", "erpnext"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: JavaScript"
+]
+requires-python = ">=3.6"
+readme = "README.md"
+dynamic = ["version"]
+dependencies = [
+    "frappe>=13.0.0"
+]
+
+[project.urls]
+Documentation = "https://github.com/kid1194/frappe-strict-session-defaults"
+Source = "https://github.com/kid1194/frappe-strict-session-defaults"
