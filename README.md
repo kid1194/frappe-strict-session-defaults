@@ -1,0 +1,1 @@
+# frappe-strict-session-defaults
