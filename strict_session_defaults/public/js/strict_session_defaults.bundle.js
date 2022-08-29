@@ -79,6 +79,6 @@ frappe.strict_session_defaults.show = function() {
     });
 };
 
-(function() {
+frappe.ready(function() {
     frappe.strict_session_defaults.init();
-}());
+});

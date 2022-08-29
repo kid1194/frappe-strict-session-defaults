@@ -32,9 +32,9 @@ def get_settings() -> dict:
     if isinstance(cache, dict):
         return cache
     
-    result = frappe._dict({
+    result = {
         "is_enabled": False,
-    })
+    }
     
     settings = frappe.get_cached_doc(_SETTINGS_DOCTYPE)
     
