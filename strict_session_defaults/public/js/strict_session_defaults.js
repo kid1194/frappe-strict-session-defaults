@@ -80,5 +80,6 @@ frappe.strict_session_defaults.show = function() {
 };
 
 frappe.ready(function() {
+    if (frappe.get_route_str().includes('/login')) return;
     frappe.strict_session_defaults.init();
 });
