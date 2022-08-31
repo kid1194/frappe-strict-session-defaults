@@ -9,7 +9,7 @@ _LOG_DOCTYPE = "Strict Session Defaults Log"
 
 
 def on_login(login_manager):
-    if get_settings().is_enabled:
+    if get_settings()["is_enabled"]:
         user = frappe.session.user
         if not frappe.db.exists(_LOG_DOCTYPE, user):
             doc = frappe.db.get_doc({
@@ -86,7 +86,7 @@ def get_status() -> dict:
     
     result["is_ready"] = True
     
-    if not get_settings().is_enabled:
+    if not get_settings()["is_enabled"]:
         return result
     
     result["show"] = frappe.db.exists(_LOG_DOCTYPE, {
@@ -98,7 +98,7 @@ def get_status() -> dict:
 @frappe.whitelist()
 def update_status() -> bool:
     user = frappe.session.user
-    if not get_settings().is_enabled:
+    if not get_settings()["is_enabled"]:
         return False
     
     if frappe.db.exists(_LOG_DOCTYPE, user):
