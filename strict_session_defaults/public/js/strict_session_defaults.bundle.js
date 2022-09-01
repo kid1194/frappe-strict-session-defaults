@@ -7,6 +7,16 @@ frappe.strict_session_defaults.init = function() {
         method: 'strict_session_defaults.override.get_status',
     }).then(function(res) {
         let data = res.message;
+        if (!data.is_ready && !frappe.strict_session_defaults._is_checked) {
+            frappe.call({
+                type: 'GET',
+                method: 'strict_session_defaults.override.get_settings',
+            }).then(function(res) {
+                frappe.strict_session_defaults._is_checked = true;
+                frappe.strict_session_defaults.init();
+            });
+            return;
+        }
         if (!data.is_ready || !data.show) return;
         frappe.strict_session_defaults.show();
     });
