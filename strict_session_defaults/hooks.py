@@ -18,11 +18,7 @@ is_frappe_above_v13 = int(frappe_version.split('.')[0]) > 13
 # app_include_css = "/assets/css/select.css"
 # app_include_js = "/assets/js/select.js"
 
-app_include_js = [
-    'strict_session_defaults.bundle.js'
-] if is_frappe_above_v13 else [
-    '/assets/js/strict_session_defaults.js'
-]
+app_include_js = ['strict_session_defaults.bundle.js'] if is_frappe_above_v13 else ['/assets/js/strict_session_defaults.js']
 
 # include custom scss in every website theme (without file extension ".scss")
 # website_theme_scss = "strict_session_defaults/public/scss/website"
