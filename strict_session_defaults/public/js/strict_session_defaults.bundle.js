@@ -1,4 +1,4 @@
-frappe.ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     if (frappe.get_route_str().includes('/login')) return;
     
     frappe.provide('frappe.strict_session_defaults');
