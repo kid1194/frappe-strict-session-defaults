@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "autoname": "hash",
  "creation": "2022-04-04 04:04:04.119400",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -12,8 +13,7 @@
    "fieldname": "role",
    "fieldtype": "Link",
    "label": "Role",
-   "options": "Role",
-   "reqd": 1
+   "options": "Role"
   }
  ],
  "istable": 1,
