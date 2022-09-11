@@ -42,7 +42,7 @@ def get_settings() -> dict:
         frappe.cache().hset(_CACHE_KEY, user, result)
         return result
     
-    users = [v.user for v in settings.user]
+    users = [v.user for v in settings.users]
     if (
         (
             settings.users_condition == "Visible Only For Listed Users"
@@ -55,7 +55,7 @@ def get_settings() -> dict:
         frappe.cache().hset(_CACHE_KEY, user, result)
         return result
     
-    roles = [v.role for v in settings.role]
+    roles = [v.role for v in settings.roles]
     if (
         (
             settings.roles_condition == "Visible Only For Listed Roles"

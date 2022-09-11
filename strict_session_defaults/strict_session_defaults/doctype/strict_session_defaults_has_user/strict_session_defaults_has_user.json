@@ -3,7 +3,6 @@
  "autoname": "hash",
  "creation": "2022-04-04 04:04:04.119400",
  "doctype": "DocType",
- "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "user"
@@ -13,7 +12,9 @@
    "fieldname": "user",
    "fieldtype": "Link",
    "label": "User",
-   "options": "User"
+   "options": "User",
+   "reqd": 1,
+   "in_list_view": 1
   }
  ],
  "istable": 1,
