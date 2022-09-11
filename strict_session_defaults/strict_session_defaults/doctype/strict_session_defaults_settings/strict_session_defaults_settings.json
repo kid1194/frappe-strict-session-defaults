@@ -7,9 +7,9 @@
   "is_enabled",
   "visibility_section",
   "roles_condition",
-  "roles",
+  "role",
   "users_condition",
-  "users",
+  "user",
   "visibility_column",
   "visibility_note"
  ],
