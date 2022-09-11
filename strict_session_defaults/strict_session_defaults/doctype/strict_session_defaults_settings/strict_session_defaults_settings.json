@@ -34,7 +34,7 @@
    "default": "Visible Only For Listed Roles"
   },
   {
-   "fieldname": "roles",
+   "fieldname": "role",
    "fieldtype": "Table MultiSelect",
    "label": "Roles",
    "options": "Strict Session Defaults Has Role"
@@ -47,7 +47,7 @@
    "default": "Visible Only For Listed Users"
   },
   {
-   "fieldname": "users",
+   "fieldname": "user",
    "fieldtype": "Table MultiSelect",
    "label": "Users",
    "options": "Strict Session Defaults Has User"
