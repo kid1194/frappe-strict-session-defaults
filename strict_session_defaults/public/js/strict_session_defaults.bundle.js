@@ -52,20 +52,32 @@ document.addEventListener('DOMContentLoaded', function() {
                         frappe.throw(_('An error occurred while setting Session Defaults'));
                         return;
                     }
-                    // if default is not set for a particular field in prompt
+                    
                     let reqd_fields = frappe.strict_session_defaults._reqd_fields,
                     count = 0;
                     fields.forEach(function(d) {
-                        if (reqd_fields.indexOf(d.fieldname) >= 0 && !!values[d.fieldname]) count++;
-                        else if (!values[d.fieldname]) values[d.fieldname] = "";
+                        if (
+                            (!reqd_fields.length || reqd_fields.indexOf(d.fieldname) >= 0)
+                            && !!values[d.fieldname]
+                        ) {
+                            count++;
+                        } else if (!values[d.fieldname]) values[d.fieldname] = "";
                     });
-                    if (count !== reqd_fields.length) {
+                    
+                    if (reqd_fields.length && count !== reqd_fields.length) {
                         frappe.show_alert({
-                            'message': __('Please fill the form of Session Defaults.'),
+                            'message': __('Please fill at least all the required fields.'),
+                            'indicator': 'orange'
+                        });
+                        return;
+                    } else if (!count) {
+                        frappe.show_alert({
+                            'message': __('Please fill at least one field.'),
                             'indicator': 'orange'
                         });
                         return;
                     }
+                    
                     frappe.call({
                         method: 'frappe.core.doctype.session_default_settings.session_default_settings.set_session_default_values',
                         args: {default_values: values},
