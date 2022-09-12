@@ -15,8 +15,8 @@ is_frappe_above_v13 = int(frappe_version.split('.')[0]) > 13
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/css/select.css"
-# app_include_js = "/assets/js/select.js"
+# app_include_css = "/assets/strict_session_defaults/css/select.css"
+# app_include_js = "/assets/strict_session_defaults/js/select.js"
 
 app_include_js = ['strict_session_defaults.bundle.js'] if is_frappe_above_v13 else ['/assets/strict_session_defaults/js/strict_session_defaults.js']
 

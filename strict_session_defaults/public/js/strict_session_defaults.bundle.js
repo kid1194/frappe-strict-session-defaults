@@ -1,3 +1,10 @@
+/*
+*  Frappe Strict Session Defaults © 2022
+*  Author:  Ameen Ahmed
+*  Company: Level Up Marketing & Software Development Services
+*  Licence: Please refer to license.txt
+*/
+
 document.addEventListener('DOMContentLoaded', function() {
     if (frappe.get_route_str().includes('/login')) return;
     
@@ -8,19 +15,14 @@ document.addEventListener('DOMContentLoaded', function() {
         frappe.call({
             type: 'GET',
             method: 'strict_session_defaults.override.get_status',
-        }).then(function(res) {
-            let data = res.message;
-            if (!data.is_ready && !frappe.strict_session_defaults._is_checked) {
-                frappe.call({
-                    type: 'GET',
-                    method: 'strict_session_defaults.override.get_settings',
-                }).then(function(res) {
-                    frappe.strict_session_defaults._is_checked = true;
-                    frappe.strict_session_defaults.init();
-                });
+        }).then(function(data) {
+            if (data && $.isPlainObject(data)) data = data.message || data;
+            if (!$.isPlainObject(data)) {
+                frappe.throw(__('The data received from Strict Session Defaults is invalid.'));
                 return;
             }
             if (!data.is_ready || !data.show) return;
+            frappe.strict_session_defaults._reqd_fields = data.reqd_fields;
             frappe.strict_session_defaults.show();
         });
     };
@@ -51,12 +53,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         return;
                     }
                     // if default is not set for a particular field in prompt
-                    let count = 0;
+                    let reqd_fields = frappe.strict_session_defaults._reqd_fields,
+                    count = 0;
                     fields.forEach(function(d) {
-                        if (!values[d.fieldname]) values[d.fieldname] = "";
-                        else count++;
+                        if (reqd_fields.indexOf(d.fieldname) >= 0 && !!values[d.fieldname]) count++;
+                        else if (!values[d.fieldname]) values[d.fieldname] = "";
                     });
-                    if (!count) {
+                    if (count !== reqd_fields.length) {
                         frappe.show_alert({
                             'message': __('Please fill the form of Session Defaults.'),
                             'indicator': 'orange'
@@ -65,9 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     frappe.call({
                         method: 'frappe.core.doctype.session_default_settings.session_default_settings.set_session_default_values',
-                        args: {
-                            default_values: values,
-                        },
+                        args: {default_values: values},
                         callback: function(data) {
                             d.hide();
                             if (data.message == "success") {
@@ -76,10 +77,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                     'indicator': 'green'
                                 });
                                 frappe.ui.toolbar.clear_cache();
-                                frappe.call({
-                                    type: 'GET',
-                                    method: 'strict_session_defaults.override.update_status',
-                                });
                             } else {
                                 frappe.throw(__('An error occurred while setting Session Defaults'));
                             }

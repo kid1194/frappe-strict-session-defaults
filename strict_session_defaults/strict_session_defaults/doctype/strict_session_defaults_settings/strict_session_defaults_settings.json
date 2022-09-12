@@ -5,6 +5,8 @@
  "engine": "InnoDB",
  "field_order": [
   "is_enabled",
+  "fields_section",
+  "reqd_fields",
   "visibility_section",
   "roles_condition",
   "roles",
@@ -20,6 +22,17 @@
    "label": "Is Enabled",
    "default": "1",
    "reqd": 1
+  },
+  {
+   "fieldname": "fields_section",
+   "fieldtype": "Section Break",
+   "label": "Fields"
+  },
+  {
+   "fieldname": "reqd_fields",
+   "fieldtype": "Small Text",
+   "label": "Required Fields",
+   "description": "Add every required fieldname in a separate line"
   },
   {
    "fieldname": "visibility_section",
@@ -62,6 +75,13 @@
    "label": "",
    "options": "The visibility of the <code>Session Defaults Popup</code> will be decided as follows:\n<ol>\n<li>If the logged-in user is listed in the <code>Users</code> field then the <code>Users Condition</code> will decide the visibility of the popup.</li>\n<li>Else, If the logged-in user has any of the listed <code>Roles</code> field then the <code>Roles Condition</code> will decide the visibility of the popup.</li>\n</ol>",
    "read_only": 1
+  },
+  {
+   "fieldname": "users_to_show",
+   "fieldtype": "Small Text",
+   "label": "Users To Show",
+   "hidden": 1,
+   "print_hide": 1
   }
  ],
  "icon": "fa fa-cog",
