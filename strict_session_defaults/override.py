@@ -14,6 +14,7 @@ _SETTINGS_DOCTYPE = "Strict Session Defaults Settings"
 
 
 def on_login(login_manager):
+    frappe.cache().hdel(_CACHE_KEY, user)
     settings = get_settings()
     if settings["is_enabled"]:
         user = frappe.session.user
@@ -33,7 +34,7 @@ def on_logout(login_manager):
                 settings["users_to_show"].remove(idx)
                 frappe.db.set_value(_SETTINGS_DOCTYPE, _SETTINGS_DOCTYPE, "users_to_show", json.dumps(settings["users_to_show"]))
         
-        frappe.cache().hdel(_CACHE_KEY, user)
+    frappe.cache().hdel(_CACHE_KEY, user)
 
 
 @frappe.whitelist()
@@ -41,7 +42,10 @@ def get_settings() -> dict:
     user = frappe.session.user
     cache = frappe.cache().hget(_CACHE_KEY, user)
     
-    if isinstance(cache, dict):
+    if (
+        isinstance(cache, dict) and "is_enabled" in cache and
+        "reqd_fields" in cache and "users_to_show" in cache
+    ):
         return cache
     
     result = {
