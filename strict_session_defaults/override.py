@@ -14,10 +14,10 @@ _SETTINGS_DOCTYPE = "Strict Session Defaults Settings"
 
 
 def on_login(login_manager):
+    user = frappe.session.user
     frappe.cache().hdel(_CACHE_KEY, user)
     settings = get_settings()
     if settings["is_enabled"]:
-        user = frappe.session.user
         if user not in settings["users_to_show"]:
             settings["users_to_show"].append(user)
             frappe.db.set_value(_SETTINGS_DOCTYPE, _SETTINGS_DOCTYPE, "users_to_show", json.dumps(settings["users_to_show"]))
