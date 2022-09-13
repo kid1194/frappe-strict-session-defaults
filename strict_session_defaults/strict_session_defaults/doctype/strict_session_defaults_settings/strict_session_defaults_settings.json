@@ -13,7 +13,8 @@
   "users_condition",
   "users",
   "visibility_column",
-  "visibility_note"
+  "visibility_note",
+  "users_to_show"
  ],
  "fields": [
   {
