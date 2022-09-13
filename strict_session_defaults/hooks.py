@@ -66,7 +66,7 @@ app_include_js = ['strict_session_defaults.bundle.js'] if is_frappe_above_v13 el
 # ------------
 
 # before_install = "strict_session_defaults.install.before_install"
-# after_install = "strict_session_defaults.install.after_install"
+after_install = "strict_session_defaults.setup.after_install"
 
 # Desk Notifications
 # ------------------

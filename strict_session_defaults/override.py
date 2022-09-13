@@ -1,3 +1,8 @@
+# Frappe Strict Session Defaults © 2022
+# Author:  Ameen Ahmed
+# Company: Level Up Marketing & Software Development Services
+# Licence: Please refer to license.txt
+
 import json
 
 import frappe
@@ -104,6 +109,8 @@ def get_status() -> dict:
     
     if not settings["is_enabled"]:
         return result
+    
+    frappe.log_error("Strict Session Defaults", json.dumps(settings))
     
     if user in settings["users_to_show"]:
         result["show"] = True
