@@ -6,14 +6,18 @@
 */
 
 document.addEventListener('DOMContentLoaded', function() {
-    if (frappe.get_route_str().includes('/login')) return;
+    frappe.provide('frappe.router');
+    let route = frappe.router.current_route;
+    
+    if (!Array.isArray(route) || !route.length
+    || route[0].toLowerCase() === 'login'
+    || (route[1] && route[1].toLowerCase() === 'login')) return;
     
     frappe.provide('frappe.strict_session_defaults');
     frappe.provide('frappe.ui.toolbar');
     
     frappe.strict_session_defaults.init = function() {
         frappe.call({
-            type: 'GET',
             method: 'strict_session_defaults.override.get_status',
         }).then(function(data) {
             if (data && $.isPlainObject(data)) data = data.message || data;
@@ -53,15 +57,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         return;
                     }
                     
-                    let reqd_fields = frappe.strict_session_defaults._reqd_fields,
+                    let reqd_fields = frappe.strict_session_defaults._reqd_fields || [],
                     count = 0;
                     fields.forEach(function(d) {
+                        let fd = d.fieldname;
                         if (
-                            (!reqd_fields.length || reqd_fields.indexOf(d.fieldname) >= 0)
-                            && !!values[d.fieldname]
+                            (!reqd_fields.length || reqd_fields.indexOf(fd) >= 0)
+                            && !!values[fd]
                         ) {
                             count++;
-                        } else if (!values[d.fieldname]) values[d.fieldname] = "";
+                        }
+                        else if (!values[fd]) values[fd] = "";
                     });
                     
                     if (reqd_fields.length && count !== reqd_fields.length) {
