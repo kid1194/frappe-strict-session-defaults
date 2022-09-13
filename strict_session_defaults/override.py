@@ -25,9 +25,9 @@ def on_login(login_manager):
 
 
 def on_logout(login_manager):
+    user = frappe.session.user
     settings = get_settings()
     if settings["is_enabled"]:
-        user = frappe.session.user
         if user in settings["users_to_show"]:
             idx = settings["users_to_show"].index(user)
             if idx >= 0:
