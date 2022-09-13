@@ -89,7 +89,7 @@ def get_settings() -> dict:
     result["is_enabled"] = True
     
     if settings.reqd_fields:
-        result["reqd_fields"] = list(set(reqd_fields.split("\n")))
+        result["reqd_fields"] = list(set(settings.reqd_fields.split("\n")))
     
     if settings.users_to_show:
         result["users_to_show"] = json.loads(settings.users_to_show)
