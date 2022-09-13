@@ -6,6 +6,9 @@
 import frappe
 from frappe.model.document import Document
 
+from strict_session_defaults.override import _CACHE_KEY
+
+
 class StrictSessionDefaultsSettings(Document):
 	def after_save(self):
-	    frappe.cache().hdel('strict_session_defaults_settings')
+	    frappe.cache().hdel(_CACHE_KEY)

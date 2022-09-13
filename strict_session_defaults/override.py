@@ -14,9 +14,9 @@ _SETTINGS_DOCTYPE = "Strict Session Defaults Settings"
 
 
 def on_login(login_manager):
-    user = frappe.session.user
-    frappe.cache().hdel(_CACHE_KEY, user)
-    settings = get_settings()
+    user = login_manager.user
+    clear_cache(user)
+    settings = get_settings(user)
     if settings["is_enabled"]:
         if user not in settings["users_to_show"]:
             settings["users_to_show"].append(user)
@@ -25,21 +25,24 @@ def on_login(login_manager):
 
 
 def on_logout(login_manager):
-    user = frappe.session.user
     settings = get_settings()
+    
     if settings["is_enabled"]:
+        user = frappe.session.user
         if user in settings["users_to_show"]:
             idx = settings["users_to_show"].index(user)
             if idx >= 0:
                 settings["users_to_show"].remove(idx)
                 frappe.db.set_value(_SETTINGS_DOCTYPE, _SETTINGS_DOCTYPE, "users_to_show", json.dumps(settings["users_to_show"]))
-        
-    frappe.cache().hdel(_CACHE_KEY, user)
+    
+    clear_cache()
 
 
 @frappe.whitelist()
-def get_settings() -> dict:
-    user = frappe.session.user
+def get_settings(user=None) -> dict:
+    if not user:
+        user = frappe.session.user
+    
     cache = frappe.cache().hget(_CACHE_KEY, user)
     
     if (
@@ -63,12 +66,10 @@ def get_settings() -> dict:
     users = [v.user for v in settings.users]
     if users:
         in_users = user in users
+        visible_for_users = settings.users_condition == "Visible Only For Listed Users"
         if (
-            (
-                settings.users_condition == "Visible Only For Listed Users" and not in_users
-            ) or (
-                settings.users_condition == "Hidden Only From Listed Users" and in_users
-            )
+            (visible_for_users and not in_users) or
+            (not visible_for_users and in_users)
         ):
             frappe.cache().hset(_CACHE_KEY, user, result)
             return result
@@ -76,12 +77,10 @@ def get_settings() -> dict:
     roles = [v.role for v in settings.roles]
     if roles:
         in_roles = has_common(roles, frappe.get_roles())
+        visible_for_roles = settings.roles_condition == "Visible Only For Listed Roles"
         if (
-            (
-                settings.roles_condition == "Visible Only For Listed Roles" and not in_roles
-            ) or (
-                settings.roles_condition == "Hidden Only From Listed Roles" and in_roles
-            )
+            (visible_for_roles and not in_roles) or
+            (not visible_for_roles and in_roles)
         ):
             frappe.cache().hset(_CACHE_KEY, user, result)
             return result
@@ -114,8 +113,6 @@ def get_status() -> dict:
     if not settings["is_enabled"]:
         return result
     
-    frappe.log_error("Strict Session Defaults", json.dumps(settings))
-    
     if user in settings["users_to_show"]:
         result["show"] = True
         idx = settings["users_to_show"].index(user)
@@ -124,6 +121,14 @@ def get_status() -> dict:
             frappe.db.set_value(_SETTINGS_DOCTYPE, _SETTINGS_DOCTYPE, "users_to_show", json.dumps(settings["users_to_show"]))
     
     result["reqd_fields"] = settings["reqd_fields"]
-    frappe.cache().hdel(_CACHE_KEY, user)
+    
+    clear_cache()
     
     return result
+
+
+def clear_cache(user=None):
+    if not user:
+        user = frappe.session.user
+    
+    frappe.cache().hdel(_CACHE_KEY, user)
