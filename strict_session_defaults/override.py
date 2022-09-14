@@ -137,8 +137,9 @@ def update_status():
         return False
     
     doc = frappe.get_doc(_LOG_DOCTYPE, log)
-    doc.is_set = 1
+    doc.is_set = "1"
     doc.save(ignore_permissions=True)
+    frappe.cache().hdel(_LOG_KEY, user):
     
     return True
 
