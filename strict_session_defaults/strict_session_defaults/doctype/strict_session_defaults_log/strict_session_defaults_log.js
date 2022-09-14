@@ -5,6 +5,6 @@
 *  Licence: Please refer to license.txt
 */
 
-frappe.ui.form.on('Strict Session Defaults Settings', {
+frappe.ui.form.on('Strict Session Defaults Log', {
     refresh: function(frm) {}
 });

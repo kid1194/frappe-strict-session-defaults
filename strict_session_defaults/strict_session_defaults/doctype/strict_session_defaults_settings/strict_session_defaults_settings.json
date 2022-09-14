@@ -8,13 +8,12 @@
   "fields_section",
   "reqd_fields",
   "visibility_section",
-  "roles_condition",
+  "hidden_from_listed_roles",
   "roles",
-  "users_condition",
+  "hidden_from_listed_users",
   "users",
   "visibility_column",
-  "visibility_note",
-  "users_to_show"
+  "visibility_note"
  ],
  "fields": [
   {
@@ -41,11 +40,9 @@
    "label": "Visibility"
   },
   {
-   "fieldname": "roles_condition",
-   "fieldtype": "Select",
-   "label": "Roles Condition",
-   "options": "Visible Only For Listed Roles\nHidden Only From Listed Roles",
-   "default": "Visible Only For Listed Roles"
+   "fieldname": "hidden_from_listed_roles",
+   "fieldtype": "Check",
+   "label": "Hidden From Listed Roles"
   },
   {
    "fieldname": "roles",
@@ -54,11 +51,9 @@
    "options": "Strict Session Defaults Has Role"
   },
   {
-   "fieldname": "users_condition",
-   "fieldtype": "Select",
-   "label": "Users Condition",
-   "options": "Visible Only For Listed Users\nHidden Only From Listed Users",
-   "default": "Visible Only For Listed Users"
+   "fieldname": "hidden_from_listed_users",
+   "fieldtype": "Check",
+   "label": "Hidden From Listed Users"
   },
   {
    "fieldname": "users",
@@ -74,15 +69,8 @@
    "fieldname": "visibility_note",
    "fieldtype": "HTML",
    "label": "",
-   "options": "The visibility of the <code>Session Defaults Popup</code> will be decided as follows:\n<ol>\n<li>If the logged-in user is listed in the <code>Users</code> field then the <code>Users Condition</code> will decide the visibility of the popup.</li>\n<li>Else, If the logged-in user has any of the listed <code>Roles</code> field then the <code>Roles Condition</code> will decide the visibility of the popup.</li>\n</ol>",
+   "options": "The visibility of the <code>Session Defaults Popup</code> will be decided as follows:\n<ol>\n<li>If the logged-in user is listed in the <code>Users</code> field then the value of <code>Hidden From Listed Users</code> will decide the visibility of the popup.</li>\n<li>Else, If the logged-in user has any of the listed <code>Roles</code> field then the value of <code>Hidden From Listed Roles</code> will decide the visibility of the popup.</li>\n</ol>",
    "read_only": 1
-  },
-  {
-   "fieldname": "users_to_show",
-   "fieldtype": "Small Text",
-   "label": "Users To Show",
-   "hidden": 1,
-   "print_hide": 1
   }
  ],
  "icon": "fa fa-cog",
