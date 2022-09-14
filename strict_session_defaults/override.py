@@ -122,6 +122,7 @@ def get_status() -> dict:
         log("Status - Settings not enabled", settings)
         return result
     
+    result["show"] = True
     result["reqd_fields"] = settings["reqd_fields"]
     log("Status - Returned result", result)
     return result

@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             log('Status data received', data);
-            if (!data.is_ready || !data.show) return;
+            if (!data.show) return;
             frappe.strict_session_defaults._reqd_fields = data.reqd_fields;
             frappe.strict_session_defaults.show();
         });
@@ -108,6 +108,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 frappe.show_alert({
                                     'message': __('Session Defaults Saved'),
                                     'indicator': 'green'
+                                });
+                                frappe.call({
+                                    method: 'strict_session_defaults.override.update_status',
                                 });
                                 frappe.ui.toolbar.clear_cache();
                             } else {
