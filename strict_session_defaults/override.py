@@ -159,7 +159,4 @@ def clear_cache(user=None):
 
 
 def log(msg, data):
-    if not isinstance(data, str):
-        data = json.dumps(data)
-    
-    frappe.log_error("Strict Session Defaults", msg + ": " + data)
+    frappe.log_error("Strict Session Defaults", msg + ": " + str(data))
