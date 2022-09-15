@@ -6,7 +6,7 @@
 import json
 
 import frappe
-from frappe.utils import has_common, now
+from frappe.utils import cint, has_common, now
 
 
 _CACHE_KEY = "strict_session_defaults_settings"
@@ -62,7 +62,7 @@ def get_settings(user=None) -> dict:
     users = [v.user for v in settings.users]
     if users:
         in_users = user in users
-        hidden_from_users = settings.hidden_from_listed_users
+        hidden_from_users = cint(settings.hidden_from_listed_users)
         if (
             (not hidden_from_users and not in_users) or
             (hidden_from_users and in_users)
@@ -76,7 +76,7 @@ def get_settings(user=None) -> dict:
         roles = [v.role for v in settings.roles]
         if roles:
             in_roles = has_common(roles, frappe.get_roles())
-            hidden_from_roles = settings.hidden_from_listed_roles
+            hidden_from_roles = cint(settings.hidden_from_listed_roles)
             if (
                 (not hidden_from_roles and not in_roles) or
                 (hidden_from_roles and in_roles)
