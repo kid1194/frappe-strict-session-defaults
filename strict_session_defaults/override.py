@@ -23,7 +23,7 @@ def on_login(login_manager):
         log = frappe.get_doc({
             "doctype": _LOG_DOCTYPE,
             "user": user,
-            "is_set": "0"
+            "is_set": 0
         })
         log.insert(ignore_permissions=True)
         frappe.cache().hset(_LOG_KEY, user, log.name)
@@ -62,7 +62,7 @@ def get_settings(user=None) -> dict:
     users = [v.user for v in settings.users]
     if users:
         in_users = user in users
-        hidden_from_users = cint(settings.hidden_from_listed_users)
+        hidden_from_users = settings.hidden_from_listed_users == 1
         if (
             (not hidden_from_users and not in_users) or
             (hidden_from_users and in_users)
@@ -76,7 +76,7 @@ def get_settings(user=None) -> dict:
         roles = [v.role for v in settings.roles]
         if roles:
             in_roles = has_common(roles, frappe.get_roles())
-            hidden_from_roles = cint(settings.hidden_from_listed_roles)
+            hidden_from_roles = settings.hidden_from_listed_roles == 1
             if (
                 (not hidden_from_roles and not in_roles) or
                 (hidden_from_roles and in_roles)
@@ -121,7 +121,7 @@ def update_status():
     if not user or not log:
         return False
     
-    frappe.db.set_value(_LOG_DOCTYPE, log, "is_set", "1")
+    frappe.db.set_value(_LOG_DOCTYPE, log, "is_set", 1)
     frappe.cache().hdel(_LOG_KEY, user)
     
     return True
