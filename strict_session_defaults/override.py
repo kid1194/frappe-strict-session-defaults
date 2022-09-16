@@ -39,7 +39,6 @@ def get_settings(user=None) -> dict:
         user = frappe.session.user
     
     cache = frappe.cache().hget(_CACHE_KEY, user)
-    
     if (
         isinstance(cache, dict) and "is_enabled" in cache and
         "reqd_fields" in cache and "users_to_show" not in cache
@@ -50,44 +49,26 @@ def get_settings(user=None) -> dict:
         "is_enabled": False,
         "reqd_fields": []
     }
-    
+    status = 0
     settings = frappe.get_cached_doc(_SETTINGS_DOCTYPE)
     
     if not settings.is_enabled:
-        frappe.cache().hset(_CACHE_KEY, user, result)
-        return result
+        status = 2
     
-    is_visible = False
+    if not status and settings.users:
+        users = [v.user for v in settings.users]
+        if users and user in users:
+            status = 2 if settings.hidden_from_listed_users else 1
     
-    users = [v.user for v in settings.users]
-    if users:
-        in_users = user in users
-        hidden_from_users = settings.hidden_from_listed_users == 1
-        if (
-            (not hidden_from_users and not in_users) or
-            (hidden_from_users and in_users)
-        ):
-            frappe.cache().hset(_CACHE_KEY, user, result)
-            return result
-        
-        is_visible = True
-    
-    if not is_visible:
+    if not status and settings.roles:
         roles = [v.role for v in settings.roles]
-        if roles:
-            in_roles = has_common(roles, frappe.get_roles())
-            hidden_from_roles = settings.hidden_from_listed_roles == 1
-            if (
-                (not hidden_from_roles and not in_roles) or
-                (hidden_from_roles and in_roles)
-            ):
-                frappe.cache().hset(_CACHE_KEY, user, result)
-                return result
+        if roles and has_common(roles, frappe.get_roles()):
+            status = 2 if settings.hidden_from_listed_roles else 1
     
-    result["is_enabled"] = True
-    
-    if settings.reqd_fields:
-        result["reqd_fields"] = list(set(settings.reqd_fields.split("\n")))
+    if status == 1:
+        result["is_enabled"] = True
+        if settings.reqd_fields:
+            result["reqd_fields"] = list(set(settings.reqd_fields.split("\n")))
     
     frappe.cache().hset(_CACHE_KEY, user, result)
     return result
@@ -105,7 +86,6 @@ def get_status() -> dict:
         return result
     
     settings = get_settings()
-    
     if settings["is_enabled"]:
         result["show"] = True
         result["reqd_fields"] = settings["reqd_fields"]
