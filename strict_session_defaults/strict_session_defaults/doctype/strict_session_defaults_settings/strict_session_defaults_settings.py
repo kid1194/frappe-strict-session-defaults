@@ -11,4 +11,4 @@ from strict_session_defaults.override import _CACHE_KEY
 
 class StrictSessionDefaultsSettings(Document):
 	def after_save(self):
-	    frappe.cache().hdel(_CACHE_KEY)
+	    frappe.cache().delete_key(_CACHE_KEY)
