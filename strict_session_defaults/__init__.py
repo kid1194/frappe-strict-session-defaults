@@ -1,4 +1,10 @@
-# -*- coding: utf-8 -*-
+# Strict Session Defaults © 2022
+# Author:  Ameen Ahmed
+# Company: Level Up Marketing & Software Development Services
+# Licence: Please refer to LICENSE file
+
+
 from __future__ import unicode_literals
 
-__version__ = "1.0.0"
+
+__version__ = "1.1.0"

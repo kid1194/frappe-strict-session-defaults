@@ -1,14 +1,14 @@
-# Frappe Strict Session Defaults © 2022
+# Strict Session Defaults © 2022
 # Author:  Ameen Ahmed
 # Company: Level Up Marketing & Software Development Services
-# Licence: Please refer to license.txt
+# Licence: Please refer to LICENSE file
 
-import frappe
+
 from frappe.model.document import Document
 
-from strict_session_defaults.override import _CACHE_KEY
+from strict_session_defaults.override import clear_document_cache
 
 
 class StrictSessionDefaultsSettings(Document):
-	def after_save(self):
-	    frappe.cache().delete_key(_CACHE_KEY)
+	def before_save(self):
+	    clear_document_cache(self.doctype)

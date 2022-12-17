@@ -1,10 +1,11 @@
 /*
-*  Frappe Strict Session Defaults © 2022
+*  Strict Session Defaults © 2022
 *  Author:  Ameen Ahmed
 *  Company: Level Up Marketing & Software Development Services
-*  Licence: Please refer to license.txt
+*  Licence: Please refer to LICENSE file
 */
 
+
 frappe.ui.form.on('Strict Session Defaults Log', {
-    refresh: function(frm) {}
+    onload: function(frm) {}
 });

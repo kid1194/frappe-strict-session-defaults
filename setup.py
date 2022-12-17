@@ -1,9 +1,16 @@
+# Strict Session Defaults © 2022
+# Author:  Ameen Ahmed
+# Company: Level Up Marketing & Software Development Services
+# Licence: Please refer to LICENSE file
+
+
 from setuptools import setup, find_packages
+from strict_session_defaults import __version__ as version
+
 
 with open('requirements.txt') as f:
     install_requires = f.read().strip().split('\n')
 
-from strict_session_defaults import __version__ as version
 
 setup(
     name='strict_session_defaults',

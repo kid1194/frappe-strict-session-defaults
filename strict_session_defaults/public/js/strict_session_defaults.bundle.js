@@ -1,120 +1,202 @@
 /*
-*  Frappe Strict Session Defaults © 2022
+*  Strict Session Defaults © 2022
 *  Author:  Ameen Ahmed
 *  Company: Level Up Marketing & Software Development Services
-*  Licence: Please refer to license.txt
+*  Licence: Please refer to LICENSE file
 */
 
-document.addEventListener('DOMContentLoaded', function() {
-    frappe.provide('frappe.router');
-    
-    let route = frappe.router.current_route;
-    if (!Array.isArray(route) || !route.length
-    || route[0].toLowerCase() === 'login'
-    || (route[1] && route[1].toLowerCase() === 'login')) return;
-    
-    frappe.provide('frappe.strict_session_defaults');
-    frappe.provide('frappe.ui.toolbar');
-    
-    frappe.strict_session_defaults.init = function() {
-        if (frappe.strict_session_defaults._is_shown) return;
+
+frappe.provide('frappe.ui.toolbar');
+frappe.provide('frappe.router');
+
+
+class StrictSessionDefaults {
+    constructor() {
+        this._fields = null;
+        this._reqds = null;
+        this.init();
+    }
+    error(text, args, _throw) {
+        if (_throw == null && args === true) {
+            _throw = args;
+            args = null;
+        }
+        if (_throw) {
+            frappe.throw(__(text, args));
+            return this;
+        }
+        frappe.msgprint({
+            title: __('Error'),
+            indicator: 'Red',
+            message: __(text, args),
+        });
+        return this;
+    }
+    init() {
+        if (this._reqds) {
+            this.get_fields();
+            return this;
+        }
+        var me = this;
         frappe.call({
             method: 'strict_session_defaults.override.get_status',
-            freeze: false,
             'async': true,
-        }).then(function(data) {
-            if (data && $.isPlainObject(data)) data = data.message || data;
-            if (!$.isPlainObject(data)) {
-                frappe.throw(__('The data received from Strict Session Defaults is invalid.'));
+        }).then(function(ret) {
+            if (ret && $.isPlainObject(ret)) ret = ret.message || ret;
+            if (!$.isPlainObject(ret)) {
+                me.error('The data received from Strict Session Defaults is invalid.');
                 return;
             }
-            if (!data.show) return;
-            frappe.strict_session_defaults._reqd_fields = data.reqd_fields;
-            frappe.strict_session_defaults.show();
+            if (!ret.show) return;
+            me._reqds = ret.reqds;
+            me.get_fields();
         });
-    };
-    
-    frappe.strict_session_defaults.show = function() {
-        if (frappe.strict_session_defaults._is_shown) return;
+    }
+    get_fields() {
+        if (this._fields) {
+            this.show();
+            return this;
+        }
+        var me = this;
+        frappe.call({
+            method: 'frappe.core.doctype.session_default_settings.session_default_settings.get_session_default_values',
+            'async': true,
+            callback: function(ret) {
+                if (ret && $.isPlainObject(ret)) ret = ret.message || ret;
+                if (typeof ret !== 'string' && !$.isArray(ret)) {
+                    me.error('The fields received from session default settings are invalid.');
+                    return;
+                }
+                let fields = null;
+                try {
+                    fields = JSON.parse(ret);
+                } catch(e) {
+                    fields = ret;
+                }
+                if (!$.isArray(fields)) {
+                    me.error('The fields received from session default settings are invalid.');
+                    reject();
+                    return;
+                }
+                me._fields = fields;
+                me._fields.unshift({
+                    fieldname: 'error_message',
+                    fieldtype: 'HTML',
+                    label: '',
+                    read_only: 1
+                });
+                me.show();
+            }
+        });
+    }
+    show() {
+        if (this._dialog) {
+            this._dialog.show();
+            return;
+        }
+        
+        var me = this;
         if (!frappe.ui.toolbar.setup_session_defaults) {
             window.setTimeout(function() {
-                frappe.strict_session_defaults.show();
+                me.show();
             }, 200);
             return;
         }
-        frappe.strict_session_defaults._is_shown = true;
+        this._dialog = new frappe.ui.Dialog({
+            fields: this._fields,
+            title: __('Session Defaults'),
+            indicator: 'green',
+        });
+        
+        this._dialog.$wrapper.modal({
+			backdrop: 'static',
+			keyboard: false,
+			show: false
+		});
+		
+        var error_message = this._dialog.get_field('error_message');
+        error_message.$wrapper.append(`<div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong class="error-message"></strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>`);
+        
+        var error_alert = error_message.$wrapper.find('.alert'),
+        error_msg = error_alert.find('.error-message');
+        error_alert.alert();
+        
+        this._dialog.set_primary_action(__('Save'), function() {
+            var values = me._dialog.get_values();
+            if (!values) {
+                me._dialog.hide();
+                me.error('An error occurred while setting Session Defaults');
+                return;
+            }
+            
+            error_alert.alert('close');
+            error_msg.html('');
+            
+            var count = 0;
+            me._fields.forEach(function(fd) {
+                let name = fd.fieldname;
+                if (
+                    (!me._reqds || !me._reqds.length || me._reqds.indexOf(fd) >= 0)
+                    && !!values[name]
+                ) {
+                    count++;
+                }
+                else if (!values[name]) values[name] = "";
+            });
+            
+            if (me._reqds && me._reqds.length && count !== me._reqds.length) {
+                error_msg.html(__('Please fill at least all the required fields.'));
+                error_alert.alert('show');
+                frappe.ui.scroll(error_alert);
+                return;
+            } else if (!count) {
+                error_msg.html(__('Please fill at least one field.'));
+                error_alert.alert('show');
+                frappe.ui.scroll(error_alert);
+                return;
+            }
+            
+            me._dialog.hide();
+            me.send(values);
+        });
+        this._dialog.header.find('.modal-actions').remove();
+        this._dialog.show();
+    }
+    send(values) {
+        var me = this;
         frappe.call({
-            method: 'frappe.core.doctype.session_default_settings.session_default_settings.get_session_default_values',
-            freeze: true,
-            callback: function(data) {
-                let fields = JSON.parse(data.message);
-                var d = new frappe.ui.Dialog({
-                    fields: fields,
-                    title: __('Session Defaults'),
-                    'static': true
-                });
-                d.set_primary_action(__('Save'), function() {
-                    var values = d.get_values();
-                    if (!values) {
-                        d.hide();
-                        frappe.throw(_('An error occurred while setting Session Defaults'));
-                        return;
-                    }
-                    
-                    let reqd_fields = frappe.strict_session_defaults._reqd_fields || [],
-                    count = 0;
-                    fields.forEach(function(d) {
-                        let fd = d.fieldname;
-                        if (
-                            (!reqd_fields.length || reqd_fields.indexOf(fd) >= 0)
-                            && !!values[fd]
-                        ) {
-                            count++;
-                        }
-                        else if (!values[fd]) values[fd] = "";
+            method: 'frappe.core.doctype.session_default_settings.session_default_settings.set_session_default_values',
+            args: {default_values: values},
+            'async': true,
+            callback: function(ret) {
+                if (ret.message == "success") {
+                    frappe.show_alert({
+                        message: __('Session Defaults Saved'),
+                        indicator: 'green'
                     });
-                    
-                    if (reqd_fields.length && count !== reqd_fields.length) {
-                        frappe.show_alert({
-                            'message': __('Please fill at least all the required fields.'),
-                            'indicator': 'orange'
-                        });
-                        return;
-                    } else if (!count) {
-                        frappe.show_alert({
-                            'message': __('Please fill at least one field.'),
-                            'indicator': 'orange'
-                        });
-                        return;
-                    }
-                    
                     frappe.call({
-                        method: 'frappe.core.doctype.session_default_settings.session_default_settings.set_session_default_values',
-                        args: {default_values: values},
-                        freeze: true,
-                        callback: function(data) {
-                            d.hide();
-                            if (data.message == "success") {
-                                frappe.show_alert({
-                                    'message': __('Session Defaults Saved'),
-                                    'indicator': 'green'
-                                });
-                                frappe.call({
-                                    method: 'strict_session_defaults.override.update_status',
-                                    freeze: false,
-                                    'async': true,
-                                });
-                                frappe.ui.toolbar.clear_cache();
-                            } else {
-                                frappe.throw(__('An error occurred while setting Session Defaults'));
-                            }
-                        }
+                        method: 'strict_session_defaults.override.update_status',
+                        'async': true,
                     });
-                });
-                d.header.find('.modal-actions').remove();
-                d.show();
+                    frappe.ui.toolbar.clear_cache();
+                } else {
+                    me.error('An error occurred while setting Session Defaults');
+                }
             }
         });
-    };
-    frappe.strict_session_defaults.init();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    let route = frappe.router.current_route;
+    if (!$.isArray(route) || !route.length
+    || route[0].toLowerCase() === 'login'
+    || (route[1] && route[1].toLowerCase() === 'login')) return;
+    
+    new StrictSessionDefaults();
 });

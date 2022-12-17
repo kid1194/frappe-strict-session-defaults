@@ -1,10 +1,14 @@
 {
  "actions": [],
+ "allow_copy": 1,
+ "allow_import": 1,
  "creation": "2022-04-04 04:04:04.119400",
+ "description": "Strict session defaults settings",
  "doctype": "DocType",
+ "document_type": "Document",
  "engine": "InnoDB",
  "field_order": [
-  "is_enabled",
+  "enabled",
   "fields_section",
   "reqd_fields",
   "visibility_section",
@@ -17,11 +21,10 @@
  ],
  "fields": [
   {
-   "fieldname": "is_enabled",
+   "fieldname": "enabled",
    "fieldtype": "Check",
    "label": "Is Enabled",
-   "default": "1",
-   "reqd": 1
+   "default": "1"
   },
   {
    "fieldname": "fields_section",
@@ -32,7 +35,7 @@
    "fieldname": "reqd_fields",
    "fieldtype": "Small Text",
    "label": "Required Fields",
-   "description": "Add every required fieldname in a separate line"
+   "description": "Enter each required fieldname in a separate line"
   },
   {
    "fieldname": "visibility_section",
@@ -69,7 +72,7 @@
    "fieldname": "visibility_note",
    "fieldtype": "HTML",
    "label": "",
-   "options": "The visibility of the <code>Session Defaults Popup</code> will be decided as follows:\n<ol>\n<li>If the logged-in user is listed in the <code>Users</code> field then the value of <code>Hidden From Listed Users</code> will decide the visibility of the popup.</li>\n<li>Else, If the logged-in user has any of the listed <code>Roles</code> field then the value of <code>Hidden From Listed Roles</code> will decide the visibility of the popup.</li>\n</ol>",
+   "options": "",
    "read_only": 1
   }
  ],
@@ -83,21 +86,37 @@
  "owner": "Administrator",
  "permissions": [
   {
+   "amend": 1,
+   "cancel": 1,
    "create": 1,
+   "delete": 1,
    "email": 1,
+   "export": 1,
+   "import": 1,
    "print": 1,
    "read": 1,
+   "report": 1,
    "role": "System Manager",
+   "set_user_permissions": 1,
    "share": 1,
+   "submit": 1,
    "write": 1
   },
   {
+   "amend": 1,
+   "cancel": 1,
    "create": 1,
+   "delete": 1,
    "email": 1,
+   "export": 1,
+   "import": 1,
    "print": 1,
    "read": 1,
+   "report": 1,
    "role": "Administrator",
+   "set_user_permissions": 1,
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

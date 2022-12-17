@@ -1,20 +1,18 @@
 # Frappe Strict Session Defaults
+
 A small plugin for Frappe that enforces and manages the session defaults popup.
 
+---
+
 ### Table of Contents
-<ul>
-    <li><a href="#requirements">Requirements</a></li>
-    <li>
-        <a href="#setup">Setup</a>
-        <ul>
-            <li><a href="#install">Install</a></li>
-            <li><a href="#update">Update</a></li>
-            <li><a href="#uninstall">Uninstall</a></li>
-        </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#license">License</a></li>
-</ul>
+- [Requirements](#requirements)
+- [Setup](#setup)
+  - [Install](#install)
+  - [Update](#update)
+  - [Uninstall](#uninstall)
+- [Usage](#usage)
+- [Issues](#issues)
+- [License](#license)
 
 ---
 
@@ -23,42 +21,104 @@ A small plugin for Frappe that enforces and manages the session defaults popup.
 
 ---
 
-### Setup
+#### Setup
+
+⚠️ *Important* ⚠️
+
+*Do not forget to replace [sitename] with the name of your site in all commands.*
 
 #### Install
-1. Get the plugin from Github
+1. Go to bench directory
+
+```
+cd ~/frappe-bench
+```
+
+2. Get plugin from Github
 
 *(Required only once)*
 
-`bench get-app https://github.com/kid1194/frappe-strict-session-defaults`
+```
+bench get-app https://github.com/kid1194/frappe-strict-session-defaults
+```
 
-2. Install the plugin on any instance/site you want
+3. Build plugin
 
-`bench --site [sitename] install-app strict_session_defaults`
+*(Required only once)*
 
-3. Check the usage section below
+```
+bench build --app strict_session_defaults
+```
+
+4. Install plugin on a specific site
+
+```
+bench --site [sitename] install-app strict_session_defaults
+```
+
+5. Check the usage section below
 
 #### Update
-1. Go to the app directory (frappe-bench/apps/strict_session_defaults) and execute:
+1. Go to app directory
 
-`git pull`
+```
+cd ~/frappe-bench/apps/strict_session_defaults
+```
 
-2. Go back to the frappe-bench directory and execute:
+2. Get updates from Github
 
-`bench --site [sitename] migrate`
+```
+git pull
+```
 
-3. *In case you need to restart bench, execute:*
+3. Go to bench directory
 
-`bench restart`
+```
+cd ~/frappe-bench
+```
+
+4. Build plugin
+
+```
+bench build --app strict_session_defaults
+```
+
+5. Update a specific site
+
+```
+bench --site [sitename] migrate
+```
+
+6. (Optional) Restart bench
+
+```
+bench restart
+```
 
 #### Uninstall
-1. Uninstall the plugin from the instance/site
+1. Go to bench directory
 
-`bench --site [sitename] uninstall-app strict_session_defaults`
+```
+cd ~/frappe-bench
+```
 
-2. Uninstall the plugin from bench
+2. Uninstall plugin from a specific site
 
-`bench remove-app strict_session_defaults`
+```
+bench --site [sitename] uninstall-app strict_session_defaults
+```
+
+3. Remove plugin from bench
+
+```
+bench remove-app strict_session_defaults
+```
+
+4. (Optional) Restart bench
+
+```
+bench restart
+```
 
 ---
 
@@ -71,5 +131,10 @@ A small plugin for Frappe that enforces and manages the session defaults popup.
 
 ---
 
+### Issues
+If you find bug in the plugin, please create a [bug report](https://github.com/kid1194/frappe-strict-session-defaults/issues/new?assignees=kid1194&labels=bug&title=%5BBUG%5D) and let us know about it.
+
+---
+
 ### License
-MIT
+This repository has been released under the [MIT License](https://github.com/kid1194/frappe-strict-session-defaults/blob/main/LICENSE).
